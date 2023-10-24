@@ -1,0 +1,21 @@
+
+q
+java:S1104"OMake key a static final constant or non-public and provide accessors if needed.(è‹¹ãøÿÿÿÿ8¢ÅÀÕµ1
+n
+java:S1104"QMake value a static final constant or non-public and provide accessors if needed.(àÁµÃ8¢ÅÀÕµ1
+E
+java:S3066"#Lower the visibility of this field.(è‹¹ãøÿÿÿÿ8«ÅÀÕµ1
+@
+java:S3066"#Lower the visibility of this field.(àÁµÃ8«ÅÀÕµ1
+9
+java:S6205""Remove this redundant block.(à­Œú8­ÅÀÕµ1
+>
+java:S6205-"Remove this redundant block.(ñíÃøÿÿÿÿ8®ÅÀÕµ1
+>
+java:S6205>"Remove this redundant block.(À¾ñşÿÿÿÿ8¯ÅÀÕµ1
+9
+java:S6205A"Remove this redundant block.(°úÀñ8¯ÅÀÕµ1
+>
+java:S6205D"Remove this redundant block.( «Š“øÿÿÿÿ8¯ÅÀÕµ1
+9
+java:S6205G"Remove this redundant block.(ïÚ×»8¯ÅÀÕµ1
