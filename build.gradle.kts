@@ -1,3 +1,5 @@
+import org.gradle.internal.impldep.org.apache.maven.model.Build
+
 plugins {
     id("java")
     application
@@ -11,6 +13,8 @@ repositories {
 }
 
 dependencies {
+    implementation("com.google.code.gson:gson:2.10.1")
+
     testImplementation(platform("org.junit:junit-bom:5.9.1"))
     testImplementation("org.junit.jupiter:junit-jupiter")
 }
@@ -29,8 +33,14 @@ tasks {
     }
 
     withType<Jar> {
+        from(sourceSets.main.get().output)
+        dependsOn(configurations.runtimeClasspath)
+        from({ configurations.runtimeClasspath.get().filter { it.name.endsWith("jar") }.map { zipTree(it) } })
+
         manifest {
-            attributes("Main-Class" to application.mainClass)
+            attributes(
+                "Main-Class" to application.mainClass,
+            )
         }
     }
 }

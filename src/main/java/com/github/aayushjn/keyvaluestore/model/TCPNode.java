@@ -1,11 +1,14 @@
 package com.github.aayushjn.keyvaluestore.model;
 
 import com.github.aayushjn.keyvaluestore.util.ConsoleColor;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import java.io.*;
 import java.net.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Future;
 import java.util.logging.Level;
 
@@ -31,64 +34,29 @@ public class TCPNode extends Node {
     @Override
     protected void listenOnSocket() {
         List<Future<?>> futures = new ArrayList<>(peers.size());
-        List<Future<?>> completedFutures = new ArrayList<>(peers.size());
         while (state.get() == NodeState.RUNNING) {
             if (futures.size() == peers.size()) {
-                for (Future<?> future : futures) {
-                    if (future.isDone()) {
-                        completedFutures.add(future);
-                    }
-                }
+                futures.removeIf(Future::isDone);
             }
-            futures.removeAll(completedFutures);
-            completedFutures.clear();
             if (futures.size() == peers.size()) continue;
-            futures.add(
-                executorService.submit(() -> {
-                    try (Socket socket = listenSocket.accept()) {
-                        BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                        BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
 
-                        MessageType mt = MessageType.parseString(reader.readLine());
-                        switch (mt) {
-                            case GET -> {
-                                if (store.hasLocally(mt.key)) {
-                                    MessageType resp = MessageType.DATA;
-                                    resp.key = mt.key;
-                                    resp.value = store.get(mt.key);
-                                    writer.write(resp.toString());
-                                }
-                            }
-                            case DELETE -> store.removePeerForKey(mt.key);
-                            case STORE -> {
-                                // TODO: Return all local data
-                            }
-                            case OWNER -> {
-                                MessageType resp;
-                                if (store.hasKey(mt.key) || awaitingOwnershipOn.equals(mt.key)) {
-                                    resp = MessageType.NAK;
-                                } else {
-                                    resp = MessageType.ACK;
-                                }
-                                resp.key = mt.key;
-                                writer.write(resp.toString());
-                            }
-                            case COMMIT -> store.putPeerForKey(mt.key, socket.getRemoteSocketAddress().toString());
-                            case ACK -> {
-                                // TODO: Handle agreement logic
-                            }
-                            case NAK -> {
-                                // TODO: Handle agreement logic
-                            }
-                            default -> logger.warning("Unsupported message type received");
-                        }
-                    } catch (SocketException ignored) {
-                        // ignore this since the socket is closed
-                    } catch (IOException e) {
-                        logger.log(Level.WARNING, e, e::getMessage);
+            Runnable task = () -> {
+                try (Socket socket = listenSocket.accept()) {
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                    BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+
+                    MessageType mt = MessageType.parseString(reader.readLine());
+                    MessageType resp = handleRemoteMessage(mt, socket.getRemoteSocketAddress().toString());
+                    if (resp != null) {
+                        writer.write(resp.toString());
                     }
-                })
-            );
+                } catch (SocketException ignored) {
+                    // ignore this since the socket is closed
+                } catch (IOException e) {
+                    logger.log(Level.WARNING, e, e::getMessage);
+                }
+            };
+            futures.add(executorService.submit(task));
         }
     }
 
@@ -112,7 +80,19 @@ public class TCPNode extends Node {
                     if (store.hasLocally(mt.key)) {
                         bw.write(store.get(mt.key).toString() + "\n");
                     } else if (store.hasRemotely(mt.key)) {
-                        // TODO: Get key from peer
+                        String peer = store.getPeerForKey(mt.key);
+                        // TODO: send GET message to peer
+                        try {
+                            Thread.sleep(500);
+                        } catch (InterruptedException e) {
+                            throw new RuntimeException(e);
+                        }
+                        Object rData = requestedData.get();
+                        if (rData != null) {
+                            bw.write(rData.toString() + "\n");
+                        } else {
+                            bw.write(ConsoleColor.withForegroundColor("Could not get data from peer", 184, 0, 0) + "\n");
+                        }
                     } else {
                         bw.write(ConsoleColor.withForegroundColor(MSG_KEY_NOT_LOCAL, 184, 0, 0) + "\n");
                     }
@@ -125,18 +105,36 @@ public class TCPNode extends Node {
                     } else if (store.hasRemotely(mt.key)) {
                         bw.write(ConsoleColor.withForegroundColor(MSG_KEY_NOT_LOCAL, 184, 0, 0) + "\n");
                     } else {
-                        awaitingOwnershipOn = mt.key;
-                        // TODO: Start agreement protocol
-                        store.put(mt.key, mt.value);
-                        bw.write(ConsoleColor.withForegroundColor(MSG_OK, 166, 166, 166) + "\n");
-                        awaitingOwnershipOn = "";
+                        awaitingData.set(Map.entry(mt.key, mt.value));
+                        for (String peer : peers) {
+                            // TODO: send OWNER message to peer
+                        }
+                        try {
+                            Thread.sleep(AGREEMENT_DELAY);
+                        } catch (InterruptedException e) {
+                            logger.log(Level.WARNING, e, e::getMessage);
+                        }
+                        if (hasMajority()) {
+                            store.put(mt.key, mt.value);
+                            for (String peer : peers) {
+                                // TODO: send COMMIT message to peer
+                            }
+                            bw.write(ConsoleColor.withForegroundColor(MSG_OK, 166, 166, 166) + "\n");
+                        } else {
+                            bw.write(ConsoleColor.withForegroundColor("Cannot write data", 184, 0, 0) + "\n");
+                        }
+                        acks.set(0);
+                        naks.set(0);
+                        awaitingData.set(null);
                     }
                     bw.flush();
                 }
                 case DELETE -> {
                     if (store.hasLocally(mt.key)) {
                         store.delete(mt.key);
-                        // TODO: Send DELETE message to peers
+                        for (String peer : peers) {
+                            // TODO: send DELETE message to peer
+                        }
                         bw.write(ConsoleColor.withForegroundColor(MSG_OK, 166, 166, 166) + "\n");
                     } else if (store.hasRemotely(mt.key)) {
                         bw.write(ConsoleColor.withForegroundColor(MSG_KEY_NOT_LOCAL, 184, 0, 0) + "\n");
@@ -146,10 +144,24 @@ public class TCPNode extends Node {
                     bw.flush();
                 }
                 case STORE -> {
-                    // TODO: Fetch all data
+                    Map<String, Object> localStore = store.getAll();
+                    for (String peer : peers) {
+                        // TODO: send STORE message to peer
+                    }
+                    // TODO: Combine received stores
+                    Gson gson = new GsonBuilder().setPrettyPrinting().create();
+                    String data = gson.toJson(localStore);
+                    if (data.length() > 65535) {
+                        bw.write(data.substring(0, 65535) + " <trimmed>...\n");
+                    } else {
+                        bw.write(data + "\n");
+                    }
+                    bw.flush();
                 }
                 case EXIT -> {
-                    // TODO: Send EXIT message to peers
+                    for (String peer : peers) {
+                        // TODO: send EXIT message to peer
+                    }
                     close();
                 }
                 default -> logger.warning("Unsupported message type received");

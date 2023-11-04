@@ -7,8 +7,8 @@ public class Store {
     private final Map<String, String> peerStore;
 
     public Store() {
-        localStore = new HashMap<>();
-        peerStore = new HashMap<>();
+        localStore = new Hashtable<>();
+        peerStore = new Hashtable<>();
     }
 
     public void putPeerForKey(String key, String peerInfo) {
@@ -17,6 +17,17 @@ public class Store {
 
     public void removePeerForKey(String key) {
         peerStore.remove(key);
+    }
+
+    public void removePeer(String peer) {
+        Iterator<Map.Entry<String, String>> iterator = peerStore.entrySet().iterator();
+        Map.Entry<String, String> entry;
+        while (iterator.hasNext()) {
+            entry = iterator.next();
+            if (peer.equals(entry.getValue())) {
+                iterator.remove();
+            }
+        }
     }
 
     public String getPeerForKey(String key) {
@@ -28,6 +39,10 @@ public class Store {
             throw new IllegalArgumentException("Key " + key + " is owned by someone else");
         }
         return localStore.getOrDefault(key, null);
+    }
+
+    public Map<String, Object> getAll() {
+        return localStore;
     }
 
     public void put(String key, Object value) {

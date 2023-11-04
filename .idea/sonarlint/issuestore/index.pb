@@ -15,3 +15,7 @@ v
 Fsrc/main/java/com/github/aayushjn/keyvaluestore/model/MessageType.java,3/f/3f5af78ade35cc1fbc7d4c172fdb504e7942397c
 v
 Fsrc/main/java/com/github/aayushjn/keyvaluestore/util/ConsoleColor.java,e/2/e2b1b9af19e0cda295432d847d83c32339e20bb8
+9
+	README.md,8/e/8ec9a00bfd09b3190ac6b22251dbb1aa95a0579d
+t
+Dsrc/main/java/com/github/aayushjn/keyvaluestore/model/Agreeable.java,8/f/8f5a5847e27d4afdc224fb7ee769c646f078d0cb
