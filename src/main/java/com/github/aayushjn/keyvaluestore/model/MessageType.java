@@ -31,8 +31,8 @@ public enum MessageType {
     // COMMIT <key> -> agreement completion message
     COMMIT;
 
-    String key = "";
-    Object value = null;
+    public String key = "";
+    public Object value = null;
 
     @Override
     public String toString() throws NoSuchElementException {

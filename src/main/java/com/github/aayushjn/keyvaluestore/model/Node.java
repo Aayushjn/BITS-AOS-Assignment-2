@@ -58,7 +58,7 @@ public abstract class Node extends Agreeable<Map.Entry<String, Object>, String> 
                 }
             }
             case DELETE -> store.removePeerForKey(mt.key);
-            case DATA -> requestedData.set(mt.value);
+//            case DATA -> requestedData.set(mt.value);
             case STORE -> {
                 resp = MessageType.DATA_ALL;
                 resp.value = store.getAll();
@@ -75,16 +75,16 @@ public abstract class Node extends Agreeable<Map.Entry<String, Object>, String> 
                 store.putPeerForKey(mt.key, peer);
                 votedOn.remove(mt.key);
             }
-            case ACK -> {
-                if (awaitingData.get() != null) {
-                    acks.getAndUpdate(i -> i + 1);
-                }
-            }
-            case NAK -> {
-                if (awaitingData.get() != null) {
-                    naks.getAndUpdate(i -> i + 1);
-                }
-            }
+//            case ACK -> {
+//                if (awaitingData.get() != null) {
+//                    acks.getAndUpdate(i -> i + 1);
+//                }
+//            }
+//            case NAK -> {
+//                if (awaitingData.get() != null) {
+//                    naks.getAndUpdate(i -> i + 1);
+//                }
+//            }
             case EXIT -> store.removePeer(peer);
             default -> logger.warning("Unsupported message type received");
         }

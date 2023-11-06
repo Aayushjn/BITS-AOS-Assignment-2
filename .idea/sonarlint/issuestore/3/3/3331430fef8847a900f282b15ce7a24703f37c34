@@ -1,23 +1,38 @@
 
+g	java:S112X"FDefine and throw a dedicated exception instead of using a generic one.(Ò‚Òéüÿÿÿÿ8–ÅàÄ¹1
 t
-java:S3776""RRefactor this method to reduce its Cognitive Complexity from 25 to the 15 allowed.(±Î×ßüÿÿÿÿ8İÇ¶¬¹1
-t
-java:S3776K"RRefactor this method to reduce its Cognitive Complexity from 29 to the 15 allowed.(Î‚Å„şÿÿÿÿ8âÇ¶¬¹1
-O
-java:S1135^"2Complete the task associated to this TODO comment.(Á¤Âû8äÇ¶¬¹1
+java:S3776@"RRefactor this method to reduce its Cognitive Complexity from 61 to the 15 allowed.(Î‚Å„şÿÿÿÿ8©ÅàÄ¹1
+U
+java:S1854S"8Remove this useless assignment to local variable "peer".(˜ë¥8ªÅàÄ¹1
+F
+java:S1481S")Remove this unused "peer" local variable.(˜ë¥8«ÅàÄ¹1
 {
-java:S2142o"^Either re-interrupt this method or rethrow the "InterruptedException" that can be caught here.(ä ¹€8åÇ¶¬¹1
-O
-java:S1135l"2Complete the task associated to this TODO comment.(Ì›ï„8åÇ¶¬¹1
+java:S2142W"^Either re-interrupt this method or rethrow the "InterruptedException" that can be caught here.(ä ¹€8¬ÅàÄ¹1
 T
-java:S1135u"2Complete the task associated to this TODO comment.(Àƒÿ½ûÿÿÿÿ8åÇ¶¬¹1
-U
-java:S1135‚"2Complete the task associated to this TODO comment.(øñòğúÿÿÿÿ8æÇ¶¬¹1
+java:S1135T"2Complete the task associated to this TODO comment.(ì ö†øÿÿÿÿ8¬ÅàÄ¹1
+F
+java:S1481m")Remove this unused "peer" local variable.(ÏŞ·Á8­ÅàÄ¹1
+O
+java:S1135n"2Complete the task associated to this TODO comment.(ı˜êş8­ÅàÄ¹1
+{
+java:S2142r"^Either re-interrupt this method or rethrow the "InterruptedException" that can be caught here.(ä ¹€8­ÅàÄ¹1
+F
+java:S1481w")Remove this unused "peer" local variable.(ÏŞ·Á8­ÅàÄ¹1
+T
+java:S1135x"2Complete the task associated to this TODO comment.(İÙ¨¡ûÿÿÿÿ8®ÅàÄ¹1
+G
+java:S1481‡")Remove this unused "peer" local variable.(ÏŞ·Á8®ÅàÄ¹1
 P
-java:S1135"2Complete the task associated to this TODO comment.(“ù‡Ó8æÇ¶¬¹1
+java:S1135ˆ"2Complete the task associated to this TODO comment.(ö¢şÎ8®ÅàÄ¹1
+G
+java:S1481”")Remove this unused "peer" local variable.(ÏŞ·Á8¯ÅàÄ¹1
 U
-java:S1135"2Complete the task associated to this TODO comment.(¹ä’²ùÿÿÿÿ8æÇ¶¬¹1
-?
-java:S6205”"Remove this redundant block.(ıÉçøÿÿÿÿ8ğÇ¶¬¹1
+java:S1135•"2Complete the task associated to this TODO comment.(»œ¬Üıÿÿÿÿ8¯ÅàÄ¹1
+U
+java:S1135—"2Complete the task associated to this TODO comment.(¹ä’²ùÿÿÿÿ8¯ÅàÄ¹1
+G
+java:S1481¢")Remove this unused "peer" local variable.(ÏŞ·Á8ÁƒäÄ¹1
 P
-java:S1135•"2Complete the task associated to this TODO comment.(Ñöè8ğÇ¶¬¹1
+java:S1135£"2Complete the task associated to this TODO comment.(°ÿƒş8ÀÅàÄ¹1
+é
+java:S6541@"ÆA "Brain Method" was detected. Refactor it to reduce at least one of the following metrics: LOC from 100 to 64, Complexity from 21 to 14, Nesting Level from 5 to 2, Number of Variables from 15 to 6.(Î‚Å„şÿÿÿÿ8ÁÅàÄ¹1

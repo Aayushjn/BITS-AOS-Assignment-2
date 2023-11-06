@@ -1,3 +1,8 @@
 
+g	java:S112"FDefine and throw a dedicated exception instead of using a generic one.(Ò‚Òιόÿÿÿÿ8Ν™ΕΉ1
+_
+java:S1163"=Refactor this code to not throw exceptions in finally blocks.(Ò‚Òιόÿÿÿÿ8Ξ™ΕΉ1
+V
+java:S1143"4Remove this throw statement from this finally block.(Ò‚Òιόÿÿÿÿ8Ξ™ΕΉ1
 {
-java:S2142"^Either re-interrupt this method or rethrow the "InterruptedException" that can be caught here.(ς¶Θ8ϋΦΪµ1
+java:S2142"^Either re-interrupt this method or rethrow the "InterruptedException" that can be caught here.(ς¶Θ8Ήπ–ΕΉ1

@@ -9,12 +9,15 @@ import java.io.IOException;
 public class KeyValueStore {
     public static void main(String[] args) {
         String mode = "tcp";
+        String host = args[0];
+        int port = Integer.parseInt(args[1]);
+        String[] peers = args[2].split(",");
 
         Node node = null;
         try {
             switch (mode) {
-                case "tcp" -> node = new TCPNode("127.0.0.1", 8551);
-                case "udp" -> node = new UDPNode("127.0.0.1", 8551);
+                case "tcp" -> node = new TCPNode(host, port, peers);
+                case "udp" -> node = new UDPNode(host, port, peers);
                 default -> throw new IllegalArgumentException("unknown mode '" + mode + "'");
             }
             node.listen();

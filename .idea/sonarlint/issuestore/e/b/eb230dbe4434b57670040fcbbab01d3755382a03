@@ -1,4 +1,4 @@
 
-L	java:S106."+Replace this use of System.out by a logger.(•şøéùÿÿÿÿ8Æ¦±¹1
-E	java:S108<")Either remove or fill this block of code.(Òî†Ş8È¦±¹1
-J	java:S108V")Either remove or fill this block of code.(ş¼èúÿÿÿÿ8È¦±¹1
+L	java:S106/"+Replace this use of System.out by a logger.(•şøéùÿÿÿÿ8Á­æÃ¹1
+™
+java:S1130b"wRemove the declaration of thrown exception 'java.lang.InterruptedException', as it cannot be thrown from method's body.(©ò¦Ïúÿÿÿÿ8‹ªöÅ¹1

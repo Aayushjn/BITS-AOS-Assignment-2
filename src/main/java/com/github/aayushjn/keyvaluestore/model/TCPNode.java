@@ -1,6 +1,7 @@
 package com.github.aayushjn.keyvaluestore.model;
 
 import com.github.aayushjn.keyvaluestore.util.ConsoleColor;
+import com.github.aayushjn.keyvaluestore.util.MessageUtils;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -9,11 +10,13 @@ import java.net.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.Future;
 import java.util.logging.Level;
 
 public class TCPNode extends Node {
     private final ServerSocket listenSocket;
+    private final Socket sendSocket;
 
     public TCPNode(String addr, int port, String... peers) throws IOException {
         super(NodeType.TCP, peers);
@@ -26,6 +29,7 @@ public class TCPNode extends Node {
         }
         listenSocket = new ServerSocket(port, peers.length, bindAddr);
         listenSocket.setReuseAddress(true);
+        sendSocket = new Socket();
         bw.write(id + " listening on " + listenSocket.getLocalSocketAddress() + "\n");
         bw.flush();
         state.compareAndSet(NodeState.READY, NodeState.RUNNING);
@@ -42,15 +46,19 @@ public class TCPNode extends Node {
 
             Runnable task = () -> {
                 try (Socket socket = listenSocket.accept()) {
+                    System.out.println("accepted");
                     BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                     BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
 
                     MessageType mt = MessageType.parseString(reader.readLine());
+                    System.out.println(mt);
+
                     MessageType resp = handleRemoteMessage(mt, socket.getRemoteSocketAddress().toString());
                     if (resp != null) {
                         writer.write(resp.toString());
                     }
                 } catch (SocketException ignored) {
+                    logger.log(Level.WARNING, ignored, ignored::getMessage);
                     // ignore this since the socket is closed
                 } catch (IOException e) {
                     logger.log(Level.WARNING, e, e::getMessage);
@@ -81,18 +89,14 @@ public class TCPNode extends Node {
                         bw.write(store.get(mt.key).toString() + "\n");
                     } else if (store.hasRemotely(mt.key)) {
                         String peer = store.getPeerForKey(mt.key);
-                        // TODO: send GET message to peer
-                        try {
-                            Thread.sleep(500);
-                        } catch (InterruptedException e) {
-                            throw new RuntimeException(e);
-                        }
-                        Object rData = requestedData.get();
-                        if (rData != null) {
-                            bw.write(rData.toString() + "\n");
-                        } else {
-                            bw.write(ConsoleColor.withForegroundColor("Could not get data from peer", 184, 0, 0) + "\n");
-                        }
+                        Object data = MessageUtils.sendGetMessage(sendSocket, peer, mt);
+
+                        bw.write(
+                        Objects.requireNonNullElseGet(
+                                data,
+                                () -> ConsoleColor.withForegroundColor("Could not get data from peer", 184, 0, 0)
+                            ) + "\n"
+                        );
                     } else {
                         bw.write(ConsoleColor.withForegroundColor(MSG_KEY_NOT_LOCAL, 184, 0, 0) + "\n");
                     }
@@ -106,18 +110,23 @@ public class TCPNode extends Node {
                         bw.write(ConsoleColor.withForegroundColor(MSG_KEY_NOT_LOCAL, 184, 0, 0) + "\n");
                     } else {
                         awaitingData.set(Map.entry(mt.key, mt.value));
+                        MessageType msg = MessageType.OWNER;
+                        msg.key = mt.key;
+                        MessageType resp;
                         for (String peer : peers) {
-                            // TODO: send OWNER message to peer
-                        }
-                        try {
-                            Thread.sleep(AGREEMENT_DELAY);
-                        } catch (InterruptedException e) {
-                            logger.log(Level.WARNING, e, e::getMessage);
+                            resp = MessageUtils.sendOwnerMessage(sendSocket, peer, msg);
+                            if (resp == MessageType.ACK) {
+                                acks.getAndUpdate(i -> i + 1);
+                            } else if (resp == MessageType.NAK) {
+                                naks.getAndUpdate(i -> i + 1);
+                            }
                         }
                         if (hasMajority()) {
                             store.put(mt.key, mt.value);
+                            msg = MessageType.COMMIT;
+                            msg.key = mt.key;
                             for (String peer : peers) {
-                                // TODO: send COMMIT message to peer
+                                MessageUtils.sendCommitMessage(sendSocket, peer, msg);
                             }
                             bw.write(ConsoleColor.withForegroundColor(MSG_OK, 166, 166, 166) + "\n");
                         } else {
@@ -173,6 +182,7 @@ public class TCPNode extends Node {
     public void close() throws IOException {
         super.close();
         listenSocket.close();
+        sendSocket.close();
         bw.write("Shutting down...\n");
         bw.flush();
     }
