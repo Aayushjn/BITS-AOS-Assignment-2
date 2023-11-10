@@ -1,6 +1,8 @@
 package com.github.aayushjn.keyvaluestore.model;
 
-import java.util.*;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.Map;
 
 public class Store {
     private final Map<String, Object> localStore;
@@ -11,8 +13,8 @@ public class Store {
         peerStore = new Hashtable<>();
     }
 
-    public void putPeerForKey(String key, String peerInfo) {
-        peerStore.computeIfAbsent(key, k -> peerInfo);
+    public void putPeerForKey(String key, String peer) {
+        peerStore.computeIfAbsent(key, k -> peer);
     }
 
     public void removePeerForKey(String key) {
@@ -42,21 +44,15 @@ public class Store {
     }
 
     public Map<String, Object> getAll() {
-        return localStore;
+        return new Hashtable<>(localStore);
     }
 
     public void put(String key, Object value) {
-        if (peerStore.containsKey(key)) {
-            throw new IllegalArgumentException("Key " + key + " is owned by someone else");
-        }
-        localStore.put(key, value);
+        if (!peerStore.containsKey(key)) localStore.put(key, value);
     }
 
     public void delete(String key) {
-        if (!localStore.containsKey(key)) {
-            throw new IllegalArgumentException("Key " + key + " is not present locally");
-        }
-        localStore.remove(key);
+        if (hasLocally(key)) localStore.remove(key);
     }
 
     public boolean hasLocally(String key) {
@@ -69,22 +65,5 @@ public class Store {
 
     public boolean hasKey(String key) {
         return hasLocally(key) || hasRemotely(key);
-    }
-
-    public Map<String, List<String>> getKeysPerPeer() {
-        final Map<String, List<String>> mapping = new HashMap<>();
-
-        for (Map.Entry<String, String> entry : peerStore.entrySet()) {
-            String key = entry.getKey();
-            String value = entry.getValue();
-
-            mapping.compute(value, (k, v) -> {
-                v = v != null ? new ArrayList<>(v) : new ArrayList<>();
-                v.add(key);
-                return v;
-            });
-        }
-
-        return mapping;
     }
 }

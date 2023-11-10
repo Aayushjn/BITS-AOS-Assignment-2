@@ -1,8 +1,11 @@
 
-g	java:S112"FDefine and throw a dedicated exception instead of using a generic one.(Ò‚Òéüÿÿÿÿ8Íˆ™Å¹1
-_
-java:S1163"=Refactor this code to not throw exceptions in finally blocks.(Ò‚Òéüÿÿÿÿ8Îˆ™Å¹1
-V
-java:S1143"4Remove this throw statement from this finally block.(Ò‚Òéüÿÿÿÿ8Îˆ™Å¹1
-{
-java:S2142"^Either re-interrupt this method or rethrow the "InterruptedException" that can be caught here.(ò¶È8¹ğ–Å¹1
+z	java:S1359"YReduce the total number of break and continue statements in this loop to use at most one.(ü§è½ùÿÿÿÿ8Òæ±Ë»1
+g
+java:S2095*"EUse try-with-resources or close this "TCPNode" in a "finally" clause.(íÆ÷‰üÿÿÿÿ8ÕªÊË»1
+o
+java:S3776"RRefactor this method to reduce its Cognitive Complexity from 67 to the 15 allowed.(œû¿Ø8Øæ±Ë»1
+L	java:S106"+Replace this use of System.out by a logger.(¯ÿ«…ıÿÿÿÿ8Úæ±Ë»1
+L	java:S106#"+Replace this use of System.out by a logger.(¯ÿ«…ıÿÿÿÿ8Úæ±Ë»1
+G	java:S1063"+Replace this use of System.out by a logger.(ûÄÏ8Şæ±Ë»1
+ä
+java:S6541"ÆA "Brain Method" was detected. Refactor it to reduce at least one of the following metrics: LOC from 135 to 64, Complexity from 28 to 14, Nesting Level from 6 to 2, Number of Variables from 32 to 6.(œû¿Ø8ææ±Ë»1
