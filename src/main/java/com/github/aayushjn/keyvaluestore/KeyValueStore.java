@@ -7,19 +7,20 @@ import com.github.aayushjn.keyvaluestore.model.node.RMINode;
 import com.github.aayushjn.keyvaluestore.model.node.TCPNode;
 import com.github.aayushjn.keyvaluestore.model.node.UDPNode;
 import com.github.aayushjn.keyvaluestore.net.Messenger;
-import com.github.aayushjn.keyvaluestore.util.ConsoleColor;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import org.fusesource.jansi.AnsiConsole;
 
 import java.io.*;
 import java.util.Map;
 import java.util.Objects;
 
+import static com.github.aayushjn.keyvaluestore.model.MessageType.DataAll.DATA_LIMIT;
 import static com.github.aayushjn.keyvaluestore.model.node.Node.MSG_KEY_NOT_LOCAL;
 import static com.github.aayushjn.keyvaluestore.model.node.Node.MSG_OK;
+import static org.fusesource.jansi.Ansi.ansi;
 
 public class KeyValueStore {
-    private static final int STORE_CHAR_LIMIT = 65000;
 
     @SuppressWarnings("unchecked")
     public static void main(String[] args) {
@@ -42,6 +43,7 @@ public class KeyValueStore {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
         Node node = null;
+        AnsiConsole.systemInstall();
         try {
             switch (mode) {
                 case "tcp" -> node = new TCPNode(host, port, id, peers);
@@ -72,7 +74,7 @@ public class KeyValueStore {
                 try {
                     mt = MessageType.parseString(input);
                 } catch (IllegalArgumentException e) {
-                    bw.write(ConsoleColor.withForegroundColor(e.getMessage(), 184, 0, 0) + "\n");
+                    bw.write(ansi().fgRgb(184, 0, 0).a(e.getMessage()).reset() + "\n");
                     bw.flush();
                     continue;
                 }
@@ -86,18 +88,18 @@ public class KeyValueStore {
                         bw.write(
                             Objects.requireNonNullElseGet(
                                 resp.getValue(),
-                                () -> ConsoleColor.withForegroundColor("Could not get data from peer", 184, 0, 0)
+                                () -> ansi().fgRgb(184, 0, 0).a("Could not get data from peer").reset()
                             ) + "\n"
                         );
                     } else {
-                        bw.write(ConsoleColor.withForegroundColor(MSG_KEY_NOT_LOCAL, 184, 0, 0) + "\n");
+                        bw.write(ansi().fgRgb(184, 0, 0).a(MSG_KEY_NOT_LOCAL).reset() + "\n");
                     }
                 } else if (mt instanceof MessageType.Put) {
                     if (store.hasLocally(mt.getKey())) {
                         store.put(mt.getKey(), mt.getValue());
-                        bw.write(ConsoleColor.withForegroundColor(MSG_OK, 166, 166, 166) + "\n");
+                        bw.write(ansi().fgRgb(166, 166, 166).a(MSG_OK).reset() + "\n");
                     } else if (store.hasRemotely(mt.getKey())) {
-                        bw.write(ConsoleColor.withForegroundColor(MSG_KEY_NOT_LOCAL, 184, 0, 0) + "\n");
+                        bw.write(ansi().fgRgb(184, 0, 0).a(MSG_KEY_NOT_LOCAL).reset() + "\n");
                     } else {
                         node.getVotedOn().add(mt.getKey());
                         MessageType msg = new MessageType.Owner(mt.getKey());
@@ -116,9 +118,9 @@ public class KeyValueStore {
                             for (String peer : node.getPeers()) {
                                 messenger.commitKey(msg, peer);
                             }
-                            bw.write(ConsoleColor.withForegroundColor(MSG_OK, 166, 166, 166) + "\n");
+                            bw.write(ansi().fgRgb(166, 166, 166).a(MSG_OK).reset() + "\n");
                         } else {
-                            bw.write(ConsoleColor.withForegroundColor("Cannot write data", 184, 0, 0) + "\n");
+                            bw.write(ansi().fgRgb(184, 0, 0).a("Cannot write data").reset() + "\n");
                         }
                         node.resetAcks();
                         node.resetNaks();
@@ -130,9 +132,9 @@ public class KeyValueStore {
                         for (String peer : node.getPeers()) {
                             messenger.deleteKey(mt, peer);
                         }
-                        bw.write(ConsoleColor.withForegroundColor(MSG_OK, 166, 166, 166) + "\n");
+                        bw.write(ansi().fgRgb(166, 166, 166).a(MSG_OK).reset() + "\n");
                     } else {
-                        bw.write(ConsoleColor.withForegroundColor(MSG_KEY_NOT_LOCAL, 184, 0, 0) + "\n");
+                        bw.write(ansi().fgRgb(184, 0, 0).a(MSG_KEY_NOT_LOCAL).reset() + "\n");
                     }
                 } else if (mt instanceof MessageType.Store) {
                     Map<String, Object> localStore = store.getAll();
@@ -143,8 +145,8 @@ public class KeyValueStore {
                     }
                     Gson gson = new GsonBuilder().setPrettyPrinting().create();
                     String data = gson.toJson(localStore);
-                    if (data.length() > STORE_CHAR_LIMIT) {
-                        bw.write("TRIMMED:" + data.substring(0, STORE_CHAR_LIMIT) + "\n");
+                    if (data.length() > DATA_LIMIT) {
+                        bw.write("TRIMMED:" + data.substring(0, DATA_LIMIT) + "\n");
                     } else {
                         bw.write(data + "\n");
                     }
@@ -162,6 +164,7 @@ public class KeyValueStore {
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
+            AnsiConsole.systemUninstall();
             if (node != null) {
                 try {
                     br.close();

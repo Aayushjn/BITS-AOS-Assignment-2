@@ -1,13 +1,13 @@
 
-z	java:S135<"YReduce the total number of break and continue statements in this loop to use at most one.(ü§è½ùÿÿÿÿ8º¡ß¼1
+z	java:S135>"YReduce the total number of break and continue statements in this loop to use at most one.(ü§è½ùÿÿÿÿ8¾äœâ¼1
 W
-java:S1141H"5Extract this nested try block into a separate method.(¡»¢üùÿÿÿÿ8»¡ß¼1
+java:S1141J"5Extract this nested try block into a separate method.(¡»¢üùÿÿÿÿ8¾äœâ¼1
 o
-java:S3776"RRefactor this method to reduce its Cognitive Complexity from 71 to the 15 allowed.(Çµí‘8ÆŸ¡ß¼1
-L	java:S106!"+Replace this use of System.out by a logger.(¯ÿ«…ıÿÿÿÿ8ÎŸ¡ß¼1
-L	java:S106%"+Replace this use of System.out by a logger.(¯ÿ«…ıÿÿÿÿ8ÉŸ¡ß¼1
-G	java:S106+"+Replace this use of System.out by a logger.(ûÄÏ8–Àà¼1
+java:S3776"RRefactor this method to reduce its Cognitive Complexity from 71 to the 15 allowed.(Çµí‘8Çäœâ¼1
+L	java:S106""+Replace this use of System.out by a logger.(¯ÿ«…ıÿÿÿÿ8Èäœâ¼1
+L	java:S106&"+Replace this use of System.out by a logger.(¯ÿ«…ıÿÿÿÿ8Éäœâ¼1
+G	java:S106,"+Replace this use of System.out by a logger.(ûÄÏ8Ìäœâ¼1
 L
-java:S2093-"*Change this "try" to a try-with-resources.(¡»¢üùÿÿÿÿ8ÓÂ©ß¼1
+java:S2093/"*Change this "try" to a try-with-resources.(¡»¢üùÿÿÿÿ8Óäœâ¼1
 ä
-java:S6541"ÆA "Brain Method" was detected. Refactor it to reduce at least one of the following metrics: LOC from 146 to 64, Complexity from 29 to 14, Nesting Level from 7 to 2, Number of Variables from 34 to 6.(Çµí‘8×Ÿ¡ß¼1
+java:S6541"ÆA "Brain Method" was detected. Refactor it to reduce at least one of the following metrics: LOC from 148 to 64, Complexity from 29 to 14, Nesting Level from 7 to 2, Number of Variables from 34 to 6.(Çµí‘8Ôäœâ¼1

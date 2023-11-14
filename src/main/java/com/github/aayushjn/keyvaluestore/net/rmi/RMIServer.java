@@ -9,6 +9,10 @@ import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.Objects;
 
+
+/**
+ * RMI capable server implementation
+ */
 public class RMIServer extends UnicastRemoteObject implements ServerInterface {
     @Serial private static final long serialVersionUID = 20231114095600L;
 

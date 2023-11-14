@@ -15,6 +15,8 @@ repositories {
 }
 
 dependencies {
+    implementation("org.fusesource.jansi:jansi:2.4.1")
+
     implementation("com.google.code.gson:gson:2.10.1")
 
     testImplementation(platform("org.junit:junit-bom:5.9.1"))
@@ -38,6 +40,8 @@ tasks {
         from(sourceSets.main.get().output)
         dependsOn(configurations.runtimeClasspath)
         from({ configurations.runtimeClasspath.get().filter { it.name.endsWith("jar") }.map { zipTree(it) } })
+
+        duplicatesStrategy = DuplicatesStrategy.INCLUDE
 
         manifest {
             attributes(

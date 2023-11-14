@@ -4,6 +4,9 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
 
+/**
+ * A distributed K/V store that maintains data locally and also tracks keys owned by any peers
+ */
 public class Store {
     private final Map<String, Object> localStore;
     private final Map<String, String> peerStore;

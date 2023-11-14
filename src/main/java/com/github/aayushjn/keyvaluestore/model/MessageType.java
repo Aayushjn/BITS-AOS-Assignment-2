@@ -1,6 +1,7 @@
 package com.github.aayushjn.keyvaluestore.model;
 
 
+import com.github.aayushjn.keyvaluestore.util.StringUtils;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -8,10 +9,10 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.util.Map;
 
+/**
+ * Acceptable messages for this system. These messages may be typed in the console or sent over the network.
+ */
 public sealed class MessageType implements Serializable {
-    /**
-     * GET <key>
-     */
     public static final class Get extends MessageType implements Serializable {
         @Serial private static final long serialVersionUID = 20231110183500L;
 
@@ -106,6 +107,8 @@ public sealed class MessageType implements Serializable {
             String actualValue = gson.toJson(value);
             return "DATA_ALL " + actualValue;
         }
+
+        public static final int DATA_LIMIT = 65000;
     }
 
     public static final class Owner extends MessageType implements Serializable {
@@ -192,34 +195,34 @@ public sealed class MessageType implements Serializable {
     public static MessageType parseString(String s) throws IllegalArgumentException {
         MessageType mt = null;
         try {
-            if (s.regionMatches(true, 0, "GET", 0, 3)) {
+            if (StringUtils.hasPrefix(s, "GET", true)) {
                 mt = new MessageType.Get(s.substring(4));
-            } else if (s.regionMatches(true, 0, "PUT", 0, 3)) {
+            } else if (StringUtils.hasPrefix(s, "PUT", true)) {
                 String[] split = s.substring(4).split(" ", 2);
                 mt = new MessageType.Put(split[0], split[1]);
-            } else if (s.regionMatches(true, 0, "DEL", 0, 3)) {
+            } else if (StringUtils.hasPrefix(s, "DEL", true)) {
                 mt = new MessageType.Del(s.substring(4));
-            } else if (s.regionMatches(true, 0, "STORE", 0, 5)) {
+            } else if (StringUtils.hasPrefix(s, "STORE", true)) {
                 mt = new MessageType.Store();
-            } else if (s.regionMatches(true, 0, "EXIT", 0, 4)) {
+            } else if (StringUtils.hasPrefix(s, "EXIT", true)) {
                 mt = new MessageType.Exit();
                 if (s.length() > 4) {
                     mt.peer = s.substring(5);
                 }
-            } else if (s.regionMatches(true, 0, "DATA_ALL", 0, 8)) {
+            } else if (StringUtils.hasPrefix(s, "DATA_ALL", true)) {
                 Gson gson = new Gson();
                 TypeToken<Map<String, Object>> typeToken = new TypeToken<>() {};
                 mt = new MessageType.DataAll(gson.fromJson(s.substring(9), typeToken));
-            } else if (s.regionMatches(true, 0, "DATA", 0, 4)) {
+            } else if (StringUtils.hasPrefix(s, "DATA", true)) {
                 String[] split = s.substring(5).split(" ", 2);
                 mt = new MessageType.Data(split[0], split[1]);
-            } else if (s.regionMatches(true, 0, "OWNER", 0, 5)) {
+            } else if (StringUtils.hasPrefix(s, "OWNER", true)) {
                 mt = new MessageType.Owner(s.substring(6));
-            } else if (s.regionMatches(true, 0, "ACK", 0, 3)) {
+            } else if (StringUtils.hasPrefix(s, "ACK", true)) {
                 mt = new MessageType.Ack(s.substring(4));
-            } else if (s.regionMatches(true, 0, "NAK", 0, 3)) {
+            } else if (StringUtils.hasPrefix(s, "NAK", true)) {
                 mt = new MessageType.Nak(s.substring(4));
-            } else if (s.regionMatches(true, 0, "COMMIT", 0, 6)) {
+            } else if (StringUtils.hasPrefix(s, "COMMIT", true)) {
                 int sepIndex = s.indexOf("|||");
                 mt = new MessageType.Commit(s.substring(7, sepIndex), s.substring(sepIndex + 3));
             }

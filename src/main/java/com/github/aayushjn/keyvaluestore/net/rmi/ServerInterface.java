@@ -5,6 +5,9 @@ import com.github.aayushjn.keyvaluestore.model.MessageType;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 
+/**
+ * RMI capable interface that mimics an arbitrary `Messenger`
+ */
 public interface ServerInterface extends Remote {
     MessageType getValueForKey(MessageType mt, String peer) throws RemoteException;
 

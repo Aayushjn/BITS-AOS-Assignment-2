@@ -8,6 +8,8 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 
+import static com.github.aayushjn.keyvaluestore.model.MessageType.DataAll.DATA_LIMIT;
+
 public class UDPMessenger implements Messenger {
     private final DatagramSocket socket;
     private final String selfAddr;
@@ -63,7 +65,7 @@ public class UDPMessenger implements Messenger {
     }
 
     private MessageType readData() throws IOException {
-        byte[] buf = new byte[1024];
+        byte[] buf = new byte[DATA_LIMIT];
         DatagramPacket packet = new DatagramPacket(buf, buf.length);
         socket.receive(packet);
         return MessageType.parseString(new String(packet.getData(), 0, packet.getLength()));

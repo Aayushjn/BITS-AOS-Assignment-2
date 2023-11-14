@@ -15,17 +15,14 @@ import java.util.logging.Logger;
 /**
  * Node represents an arbitrary physical node running a socket connection and capable of managing a distributed K/V
  * store.
- *
  */
 public abstract class Node extends Agreeable<String> implements Closeable {
     protected final String id;
     protected Store store;
     protected final NodeType type;
     protected AtomicReference<NodeState> state;
-    protected AtomicReference<Object> requestedData;
     protected Messenger messenger;
     protected ExecutorService executorService;
-    protected final ExecutorService es;
 
     protected Node(NodeType type, String id, String... peers) {
         super(peers);
@@ -35,10 +32,8 @@ public abstract class Node extends Agreeable<String> implements Closeable {
         this.id = id;
         this.type = type;
         state = new AtomicReference<>(NodeState.READY);
-        requestedData = new AtomicReference<>(null);
 
-        executorService = Executors.newFixedThreadPool(peerCount > 0 ? peerCount : 1);
-        es = Executors.newSingleThreadExecutor();
+        executorService = Executors.newFixedThreadPool(peerCount > 0 ? peerCount + 1 : 1);
 
         store = new Store();
     }
@@ -85,14 +80,13 @@ public abstract class Node extends Agreeable<String> implements Closeable {
     protected abstract void listenOnSocket();
 
     public void listen() {
-        es.submit(this::listenOnSocket);
+        executorService.submit(this::listenOnSocket);
     }
 
     @Override
     public void close() throws IOException {
         if (state.compareAndSet(NodeState.RUNNING, NodeState.STOPPED)) {
             logger.info("Shutting down");
-            es.shutdownNow();
             executorService.shutdownNow();
         }
     }
