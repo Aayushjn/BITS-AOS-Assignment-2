@@ -3,6 +3,8 @@ import org.gradle.internal.impldep.org.apache.maven.model.Build
 plugins {
     id("java")
     application
+    checkstyle
+    pmd
 }
 
 group = "com.github.aayushjn"

@@ -67,7 +67,7 @@ public class RMIMessenger implements Messenger {
         try {
             Registry registry = LocateRegistry.getRegistry(addr, port);
             ServerInterface server = (ServerInterface) registry.lookup(peer);
-            mt.peer = selfAddr;
+            mt.setPeer(selfAddr);
             server.commitKey(mt, selfAddr);
         } catch (NotBoundException ignored) {}
     }

@@ -42,14 +42,13 @@ public class UDPMessenger implements Messenger {
 
     @Override
     public void commitKey(MessageType mt, String peer) throws IOException {
-        mt.peer = selfAddr;
+        mt.setPeer(selfAddr);
         sendMessage(mt, peer);
     }
 
     @Override
     public void exit(String peer) throws IOException {
-        MessageType mt = new MessageType.Exit();
-        mt.peer = selfAddr;
+        MessageType mt = new MessageType.Exit(selfAddr);
         sendMessage(mt, peer);
     }
 

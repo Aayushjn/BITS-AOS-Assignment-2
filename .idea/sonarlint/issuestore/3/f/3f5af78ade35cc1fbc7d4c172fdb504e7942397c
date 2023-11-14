@@ -1,9 +1,3 @@
 
-q
-java:S1104{"OMake key a static final constant or non-public and provide accessors if needed.(è‹¹ãøÿÿÿÿ8ÆÖıÊ»1
-n
-java:S1104|"QMake value a static final constant or non-public and provide accessors if needed.(àÁµÃ8ÆÖıÊ»1
-r
-java:S1104}"PMake peer a static final constant or non-public and provide accessors if needed.(©¸ü„ıÿÿÿÿ8ÆÖıÊ»1
-D
-java:S1948|"'Make "value" transient or serializable.(àÁµÃ8×ÖıÊ»1
+E
+java:S1948­"'Make "value" transient or serializable.(¾Š»Ä8øÇıß¼1

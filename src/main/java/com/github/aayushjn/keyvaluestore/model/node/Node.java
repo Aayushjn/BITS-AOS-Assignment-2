@@ -26,7 +26,6 @@ public abstract class Node extends Agreeable<String> implements Closeable {
     protected Messenger messenger;
     protected ExecutorService executorService;
     protected final ExecutorService es;
-    public final Logger logger;
 
     protected Node(NodeType type, String id, String... peers) {
         super(peers);
@@ -40,7 +39,6 @@ public abstract class Node extends Agreeable<String> implements Closeable {
 
         executorService = Executors.newFixedThreadPool(peerCount > 0 ? peerCount : 1);
         es = Executors.newSingleThreadExecutor();
-        logger = Logger.getLogger(id);
 
         store = new Store();
     }
@@ -56,31 +54,27 @@ public abstract class Node extends Agreeable<String> implements Closeable {
     protected MessageType handleRemoteMessage(MessageType mt) {
         MessageType resp = null;
         if (mt instanceof MessageType.Get) {
-            if (store.hasLocally(mt.key)) {
-                resp = new MessageType.Data();
-                resp.key = mt.key;
-                resp.value = store.get(mt.key);
+            if (store.hasLocally(mt.getKey())) {
+                resp = new MessageType.Data(mt.getKey(), store.get(mt.getKey()));
             }
         } else if (mt instanceof MessageType.Del) {
-            store.removePeerForKey(mt.key);
-            votedOn.remove(mt.key);
+            store.removePeerForKey(mt.getKey());
+            votedOn.remove(mt.getKey());
         } else if (mt instanceof MessageType.Store) {
-            resp = new MessageType.DataAll();
-            resp.value = store.getAll();
+            resp = new MessageType.DataAll(store.getAll());
         } else if (mt instanceof MessageType.Owner) {
-            if (store.hasKey(mt.key) || votedOn.contains(mt.key)) {
-                resp = new MessageType.Nak();
+            if (store.hasKey(mt.getKey()) || votedOn.contains(mt.getKey())) {
+                resp = new MessageType.Nak(mt.getKey());
             } else {
-                resp = new MessageType.Ack();
+                resp = new MessageType.Ack(mt.getKey());
             }
-            resp.key = mt.key;
-            votedOn.add(mt.key);
+            votedOn.add(mt.getKey());
         } else if (mt instanceof MessageType.Commit) {
-            store.putPeerForKey(mt.key, mt.peer);
-            votedOn.remove(mt.key);
+            store.putPeerForKey(mt.getKey(), mt.getPeer());
+            votedOn.remove(mt.getKey());
         } else if (mt instanceof MessageType.Exit) {
-            store.removePeer(mt.peer);
-            peers.remove(mt.peer);
+            store.removePeer(mt.getPeer());
+            peers.remove(mt.getPeer());
             recomputeMajority();
         } else {
             logger.warning(() -> "Unsupported message type received " + mt);
@@ -117,4 +111,5 @@ public abstract class Node extends Agreeable<String> implements Closeable {
 
     public static final String MSG_KEY_NOT_LOCAL = "Key not present here";
     public static final String MSG_OK = "<OK>";
+    protected static final Logger logger = Logger.getLogger(Node.class.getName());
 }
