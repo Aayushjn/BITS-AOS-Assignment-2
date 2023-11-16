@@ -83,6 +83,7 @@ public class KeyValueStore {
                 }
 
                 if (mt instanceof MessageType.Get) {
+                    long startTime = System.nanoTime();
                     if (store.hasLocally(mt.getKey())) {
                         bw.write(store.get(mt.getKey()).toString() + "\n");
                     } else if (store.hasRemotely(mt.getKey())) {
@@ -97,7 +98,11 @@ public class KeyValueStore {
                     } else {
                         bw.write(ansi().fgRgb(184, 0, 0).a(MSG_KEY_NOT_LOCAL).reset() + "\n");
                     }
+                    long endTime = System.nanoTime();
+                    long runTime = endTime - startTime;
+                    bw.write("Running time = " + runTime + "\n");
                 } else if (mt instanceof MessageType.Put) {
+                    long startTime = System.nanoTime();
                     if (store.hasLocally(mt.getKey())) {
                         store.put(mt.getKey(), mt.getValue());
                         bw.write(ansi().fgRgb(166, 166, 166).a(MSG_OK).reset() + "\n");
@@ -129,7 +134,11 @@ public class KeyValueStore {
                         node.resetNaks();
                         node.getVotedOn().remove(mt.getKey());
                     }
+                    long endTime = System.nanoTime();
+                    long runTime = endTime - startTime;
+                    bw.write("Running time = " + runTime + "\n");
                 } else if (mt instanceof MessageType.Del) {
+                    long startTime = System.nanoTime();
                     if (store.hasLocally(mt.getKey())) {
                         store.delete(mt.getKey());
                         for (String peer : node.getPeers()) {
@@ -139,7 +148,11 @@ public class KeyValueStore {
                     } else {
                         bw.write(ansi().fgRgb(184, 0, 0).a(MSG_KEY_NOT_LOCAL).reset() + "\n");
                     }
+                    long endTime = System.nanoTime();
+                    long runTime = endTime - startTime;
+                    bw.write("Running time = " + runTime + "\n");
                 } else if (mt instanceof MessageType.Store) {
+                    long startTime = System.nanoTime();
                     Map<String, Object> localStore = store.getAll();
                     MessageType resp;
                     for (String peer : node.getPeers()) {
@@ -153,11 +166,18 @@ public class KeyValueStore {
                     } else {
                         bw.write(data + "\n");
                     }
+                    long endTime = System.nanoTime();
+                    long runTime = endTime - startTime;
+                    bw.write("Running time = " + runTime + "\n");
                 } else if (mt instanceof MessageType.Exit) {
+                    long startTime = System.nanoTime();
                     for (String peer : node.getPeers()) {
                         messenger.exit(peer);
                     }
                     stopped = true;
+                    long endTime = System.nanoTime();
+                    long runTime = endTime - startTime;
+                    bw.write("Running time = " + runTime + "\n");
                 } else {
                     bw.write("Unsupported message type received");
                 }
