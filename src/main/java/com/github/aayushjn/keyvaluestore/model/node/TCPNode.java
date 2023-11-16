@@ -20,8 +20,8 @@ public class TCPNode extends Node {
      */
     private final Map<String, Socket> socketMap;
 
-    public TCPNode(String addr, int port, String id, String... peers) throws IOException {
-        super(NodeType.TCP, id, peers);
+    public TCPNode(String addr, int port, String... peers) throws IOException {
+        super(NodeType.TCP, peers);
 
         InetAddress bindAddr;
         try {
@@ -33,7 +33,7 @@ public class TCPNode extends Node {
         listenSocket.setReuseAddress(true);
         socketMap = HashMap.newHashMap(peers.length);
         messenger = new TCPMessenger(addr + ":" + port, socketMap);
-        logger.info(() -> id + " listening on " + listenSocket.getLocalSocketAddress());
+        logger.info(() -> "listening on " + listenSocket.getLocalSocketAddress());
 
         state.compareAndSet(NodeState.READY, NodeState.RUNNING);
     }

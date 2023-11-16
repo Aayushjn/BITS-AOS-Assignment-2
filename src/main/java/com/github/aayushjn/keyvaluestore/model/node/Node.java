@@ -17,19 +17,15 @@ import java.util.logging.Logger;
  * store.
  */
 public abstract class Node extends Agreeable<String> implements Closeable {
-    protected final String id;
     protected Store store;
     protected final NodeType type;
     protected AtomicReference<NodeState> state;
     protected Messenger messenger;
-    protected ExecutorService executorService;
-
-    protected Node(NodeType type, String id, String... peers) {
+    protected Node(NodeType type, String... peers) {
         super(peers);
 
         int peerCount = peers.length;
 
-        this.id = id;
         this.type = type;
         state = new AtomicReference<>(NodeState.READY);
 
@@ -37,6 +33,8 @@ public abstract class Node extends Agreeable<String> implements Closeable {
 
         store = new Store();
     }
+
+    protected ExecutorService executorService;
 
     public Store getStore() {
         return store;

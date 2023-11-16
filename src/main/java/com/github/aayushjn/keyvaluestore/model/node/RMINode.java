@@ -14,8 +14,8 @@ import java.util.logging.Level;
 public class RMINode extends Node {
     private final String rmiId;
 
-    public RMINode(String addr, int port, String id, String... peers) throws RemoteException, MalformedURLException {
-        super(NodeType.RMI, id, peers);
+    public RMINode(String addr, int port, String... peers) throws RemoteException, MalformedURLException {
+        super(NodeType.RMI, peers);
 
         RMIServer server = new RMIServer(store, this);
         rmiId = "rmi://" + addr + ":" + port + "/remote";
@@ -23,6 +23,8 @@ public class RMINode extends Node {
         Naming.rebind(rmiId, server);
 
         messenger = new RMIMessenger(addr + ":" + port);
+
+        logger.info(() -> "node ready\n");
 
         state.compareAndSet(NodeState.READY, NodeState.RUNNING);
     }

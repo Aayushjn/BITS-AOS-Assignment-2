@@ -18,8 +18,8 @@ public class UDPNode extends Node {
     // a separate DatagramSocket is used.
     private final DatagramSocket sendSocket;
 
-    public UDPNode(String addr, int port, String id, String... peers) throws IOException {
-        super(NodeType.UDP, id, peers);
+    public UDPNode(String addr, int port, String... peers) throws IOException {
+        super(NodeType.UDP, peers);
 
         InetAddress bindAddr;
         try {
@@ -34,7 +34,7 @@ public class UDPNode extends Node {
 
         messenger = new UDPMessenger(addr + ":" + port, sendSocket);
 
-        logger.info(() -> id + " listening on " + listenSocket.getLocalSocketAddress() + "\n");
+        logger.info(() -> "listening on " + listenSocket.getLocalSocketAddress() + "\n");
 
         state.compareAndSet(NodeState.READY, NodeState.RUNNING);
     }
