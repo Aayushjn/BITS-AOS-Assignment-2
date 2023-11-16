@@ -4,23 +4,25 @@ import com.github.aayushjn.keyvaluestore.net.rmi.RMIMessenger;
 import com.github.aayushjn.keyvaluestore.net.rmi.RMIServer;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
-import java.rmi.registry.Registry;
 import java.util.logging.Level;
 
 public class RMINode extends Node {
-    private final Registry registry;
+    private final String rmiId;
 
-    public RMINode(String addr, int port, String id, String... peers) throws RemoteException {
+    public RMINode(String addr, int port, String id, String... peers) throws RemoteException, MalformedURLException {
         super(NodeType.RMI, id, peers);
 
         RMIServer server = new RMIServer(store, this);
-        registry = LocateRegistry.getRegistry(addr, port);
-        registry.rebind(id, server);
+        rmiId = "rmi://" + addr + ":" + port + "/remote";
+        LocateRegistry.createRegistry(port);
+        Naming.rebind(rmiId, server);
 
-        messenger = new RMIMessenger(id, addr, port);
+        messenger = new RMIMessenger(addr + ":" + port);
 
         state.compareAndSet(NodeState.READY, NodeState.RUNNING);
     }
@@ -32,7 +34,7 @@ public class RMINode extends Node {
     public void close() throws IOException {
         super.close();
         try {
-            registry.unbind(id);
+            Naming.unbind(rmiId);
         } catch (NotBoundException e) {
             logger.log(Level.WARNING, e, e::getMessage);
         }
