@@ -1,14 +1,21 @@
 
-z	java:S135A"YReduce the total number of break and continue statements in this loop to use at most one.(ü§è½ùÿÿÿÿ8­Æë³½1
+b
+java:S1192g"EDefine a constant instead of duplicating this literal " ms
+" 5 times.(«›Ä³8Ç–œ¾½1
+m
+java:S1192g"PDefine a constant instead of duplicating this literal "Running time = " 5 times.(«›Ä³8íæ˜¾½1
+z	java:S135B"YReduce the total number of break and continue statements in this loop to use at most one.(ü§è½ùÿÿÿÿ8íæ˜¾½1
 W
-java:S1141M"5Extract this nested try block into a separate method.(¡»¢üùÿÿÿÿ8®Æë³½1
+java:S1141N"5Extract this nested try block into a separate method.(¡»¢üùÿÿÿÿ8îæ˜¾½1
 o
-java:S3776"RRefactor this method to reduce its Cognitive Complexity from 72 to the 15 allowed.(Çµí‘8âÉë³½1
-L	java:S106"+Replace this use of System.err by a logger.(Ë§ûËıÿÿÿÿ8÷¢ì³½1
-G	java:S106%"+Replace this use of System.err by a logger.(Àäïó8÷¢ì³½1
-G	java:S106)"+Replace this use of System.err by a logger.(Àäïó8ø¢ì³½1
-G	java:S106/"+Replace this use of System.out by a logger.(ûÄÏ8éÉë³½1
+java:S3776"RRefactor this method to reduce its Cognitive Complexity from 72 to the 15 allowed.(Çµí‘8Òé˜¾½1
+L	java:S106"+Replace this use of System.err by a logger.(Ë§ûËıÿÿÿÿ8Óé˜¾½1
+G	java:S106%"+Replace this use of System.err by a logger.(Àäïó8Ôé˜¾½1
+G	java:S106)"+Replace this use of System.err by a logger.(Àäïó8Ôé˜¾½1
+G	java:S106/"+Replace this use of System.out by a logger.(ûÄÏ8Øé˜¾½1
+G
+java:S1659A"%Declare "endTime" on a separate line.(¢ùŒºşÿÿÿÿ8Ùé˜¾½1
 L
-java:S20932"*Change this "try" to a try-with-resources.(¡»¢üùÿÿÿÿ8õÉë³½1
+java:S20932"*Change this "try" to a try-with-resources.(¡»¢üùÿÿÿÿ8åé˜¾½1
 ä
-java:S6541"ÆA "Brain Method" was detected. Refactor it to reduce at least one of the following metrics: LOC from 151 to 64, Complexity from 30 to 14, Nesting Level from 7 to 2, Number of Variables from 33 to 6.(Çµí‘8öÉë³½1
+java:S6541"ÆA "Brain Method" was detected. Refactor it to reduce at least one of the following metrics: LOC from 167 to 64, Complexity from 30 to 14, Nesting Level from 7 to 2, Number of Variables from 35 to 6.(Çµí‘8åé˜¾½1
