@@ -24,21 +24,24 @@ public class KeyValueStore {
 
     @SuppressWarnings("unchecked")
     public static void main(String[] args) {
+        if (args.length < 4) {
+            System.err.println("Insufficient arguments passed");
+            System.exit(1);
+        }
         final String mode = args[0];
-        final String id = args[1];
-        final String host = args[2];
+        final String host = args[1];
         int port = 0;
         try {
-            port = Integer.parseInt(args[3]);
+            port = Integer.parseInt(args[2]);
             if (port < 0 || port > 65535) {
-                System.out.println("Invalid port number provided");
+                System.err.println("Invalid port number provided");
                 System.exit(1);
             }
         } catch (NumberFormatException e) {
-            System.out.println("Invalid port number provided");
+            System.err.println("Invalid port number provided");
             System.exit(1);
         }
-        final String[] peers = args[4].split(",");
+        final String[] peers = args[3].split(",");
 
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
@@ -46,9 +49,9 @@ public class KeyValueStore {
         AnsiConsole.systemInstall();
         try {
             switch (mode) {
-                case "tcp" -> node = new TCPNode(host, port, id, peers);
-                case "udp" -> node = new UDPNode(host, port, id, peers);
-                case "rmi" -> node = new RMINode(host, port, id, peers);
+                case "tcp" -> node = new TCPNode(host, port, peers);
+                case "udp" -> node = new UDPNode(host, port, peers);
+                case "rmi" -> node = new RMINode(host, port, peers);
                 default -> throw new IllegalArgumentException("unknown mode '" + mode + "'");
             }
 

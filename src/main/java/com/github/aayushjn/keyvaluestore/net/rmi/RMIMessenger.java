@@ -4,26 +4,20 @@ import com.github.aayushjn.keyvaluestore.model.MessageType;
 import com.github.aayushjn.keyvaluestore.net.Messenger;
 
 import java.io.IOException;
+import java.rmi.Naming;
 import java.rmi.NotBoundException;
-import java.rmi.registry.LocateRegistry;
-import java.rmi.registry.Registry;
 
 public class RMIMessenger implements Messenger {
     private final String selfAddr;
-    private final String addr;
-    private final int port;
 
-    public RMIMessenger(String selfAddr, String addr, int port) {
+    public RMIMessenger(String selfAddr) {
         this.selfAddr = selfAddr;
-        this.addr = addr;
-        this.port = port;
     }
 
     @Override
     public MessageType getValueForKey(MessageType mt, String peer) throws IOException {
         try {
-            Registry registry = LocateRegistry.getRegistry(addr, port);
-            ServerInterface server = (ServerInterface) registry.lookup(peer);
+            ServerInterface server = (ServerInterface) Naming.lookup("rmi://" + peer + "/remote");
             return server.getValueForKey(mt, selfAddr);
         } catch (NotBoundException e) {
             e.printStackTrace();
@@ -34,8 +28,7 @@ public class RMIMessenger implements Messenger {
     @Override
     public MessageType requestAcknowledgement(MessageType mt, String peer) throws IOException {
         try {
-            Registry registry = LocateRegistry.getRegistry(addr, port);
-            ServerInterface server = (ServerInterface) registry.lookup(peer);
+            ServerInterface server = (ServerInterface) Naming.lookup("rmi://" + peer + "/remote");
             return server.requestAcknowledgement(mt, selfAddr);
         } catch (NotBoundException e) {
             return null;
@@ -45,8 +38,7 @@ public class RMIMessenger implements Messenger {
     @Override
     public MessageType getAllData(String peer) throws IOException {
         try {
-            Registry registry = LocateRegistry.getRegistry(addr, port);
-            ServerInterface server = (ServerInterface) registry.lookup(peer);
+            ServerInterface server = (ServerInterface) Naming.lookup("rmi://" + peer + "/remote");
             return server.getAllData(selfAddr);
         } catch (NotBoundException e) {
             return null;
@@ -56,8 +48,7 @@ public class RMIMessenger implements Messenger {
     @Override
     public void deleteKey(MessageType mt, String peer) throws IOException {
         try {
-            Registry registry = LocateRegistry.getRegistry(addr, port);
-            ServerInterface server = (ServerInterface) registry.lookup(peer);
+            ServerInterface server = (ServerInterface) Naming.lookup("rmi://" + peer + "/remote");
             server.deleteKey(mt, selfAddr);
         } catch (NotBoundException ignored) {}
     }
@@ -65,8 +56,7 @@ public class RMIMessenger implements Messenger {
     @Override
     public void commitKey(MessageType mt, String peer) throws IOException {
         try {
-            Registry registry = LocateRegistry.getRegistry(addr, port);
-            ServerInterface server = (ServerInterface) registry.lookup(peer);
+            ServerInterface server = (ServerInterface) Naming.lookup("rmi://" + peer + "/remote");
             mt.setPeer(selfAddr);
             server.commitKey(mt, selfAddr);
         } catch (NotBoundException ignored) {}
@@ -75,8 +65,7 @@ public class RMIMessenger implements Messenger {
     @Override
     public void exit(String peer) throws IOException {
         try {
-            Registry registry = LocateRegistry.getRegistry(addr, port);
-            ServerInterface server = (ServerInterface) registry.lookup(peer);
+            ServerInterface server = (ServerInterface) Naming.lookup("rmi://" + peer + "/remote");
             server.exit(selfAddr);
         } catch (NotBoundException ignored) {}
     }
